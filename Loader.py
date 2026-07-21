@@ -98,6 +98,7 @@ def load_annotations(path: str, sheet_name: str = DEFAULT_SHEET_NAME,
         )
 
     df = df[EXPECTED_COLUMNS].copy()
+    df["word"] = df["word"].fillna("OTH_UNKNOWN").astype(str)
 
     # Track provenance  useful once multiple everyones files get merged
     df["source_file"] = os.path.basename(path)

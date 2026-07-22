@@ -70,7 +70,7 @@ def train(path: str):
     print("\n=== Validation Set Performance ===")
     y_val_pred = model.predict(X_val)
     print(f"Accuracy: {accuracy_score(y_val, y_val_pred):.4f}")
-    print(classification_report(y_val, y_val_pred, digits=4))
+    print(classification_report(y_val, y_val_pred, digits=4, zero_division=0))
 
     # 6. Evaluate on test set (final numbers for the report)
     #    Look at these ONLY ONCE — don't retune based on them.
@@ -78,7 +78,7 @@ def train(path: str):
     print("\n=== Test Set Performance (FINAL) ===")
     y_test_pred = model.predict(X_test)
     print(f"Accuracy: {accuracy_score(y_test, y_test_pred):.4f}")
-    print(classification_report(y_test, y_test_pred, digits=4))
+    print(classification_report(y_test, y_test_pred, digits=4, zero_division=0))
 
     # 7. Save model + vectorizer together in one file
     save_path = "model.pkl"

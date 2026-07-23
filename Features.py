@@ -57,6 +57,26 @@ FIL_PREFIXES = [
 FIL_SUFFIXES = ["an", "in", "han", "hin", "ng"]
 ENG_SUFFIXES = ["ing", "ed", "tion", "sion", "ly", "er", "est", "able", "s"]
 
+# Small closed-class list of English grammatical/function words
+# E.g. "We 'might' 'be' cooked"
+ENG_FUNCTION_WORDS = {
+    "the", "a", "an", "is", "are", "was", "were", "be", "been",
+    "have", "has", "had", "do", "does", "did", "will", "would",
+    "can", "could", "should", "may", "might", "shall", "must",
+    "in", "on", "at", "to", "for", "of", "with", "by", "from",
+    "and", "or", "but", "not", "no", "if", "as", "up", "out"
+}
+# Filipino grammatical particles, usually always FIL, never ENG
+# Same idea as ENG_FUNCTION_WORDS but for Filipino
+# E.g. "Pangit ka 'po' 'ba'?"
+FIL_PARTICLES = {
+    "ang", "ng", "sa", "si", "mga", "ay", "na", "at", "ni", "kay", "kaya", "nga", "ba", "raw", "daw", "lang", "naman", "pala",
+    "po", "opo", "ho", "yung", "mga", "kung","pero", "para",
+}
+
+# English consonant clusters that don't naturally appear in Filipino
+ENG_CLUSTERS = ["str", "spr", "ght", "tch", "sch", "chr", "ph", "th", "wh"]
+
 PUNCT_CHARS = set(string.punctuation)
 
 
@@ -157,6 +177,14 @@ def word_features(word: str, prefix: str = "") -> Dict[str, Any]:
     feats["n_non_native_letters"] = sum(letters.count(ch) for ch in non_native_letters)
     feats["has_non_native_letter"] = feats["n_non_native_letters"] > 0
 
+    # Individual flags for each non-native letter — more specific than just counting them
+    # These letters rarely appear in native Filipino words so each is a strong ENG signal
+    feats["has_c"] = "c" in letters  # common in English (cat, clock, etc.)
+    feats["has_f"] = "f" in letters  # rare in Filipino (Filipino borrowed words use "p" instead)
+    feats["has_v"] = "v" in letters  # very rare in native Filipino words
+    feats["has_x"] = "x" in letters  # almost exclusively English
+    feats["has_z"] = "z" in letters  # almost exclusively English
+
     # --- 2. Capitalization --------------------------------------------------
     feats["is_capitalized"] = word[:1].isupper() if word else False
     feats["is_all_upper"] = word.isupper() if n_letters > 1 else False
@@ -181,6 +209,23 @@ def word_features(word: str, prefix: str = "") -> Dict[str, Any]:
     feats["starts_with_fil_prefix"] = any(lower.startswith(p) for p in FIL_PREFIXES)
     feats["ends_with_fil_suffix"] = any(lower.endswith(s) for s in FIL_SUFFIXES)
     feats["ends_with_eng_suffix"] = any(lower.endswith(s) for s in ENG_SUFFIXES)
+    feats["ends_ing"] = lower.endswith("ing")  # e.g. running, eating, playing
+    feats["ends_tion"] = lower.endswith("tion")  # e.g. nation, construction, education
+    feats["ends_ed"] = lower.endswith("ed")  # e.g. walked, talked, played
+    feats["ends_ly"] = lower.endswith("ly")  # e.g. quickly, slowly, really
+    feats["ends_er"] = lower.endswith("er")  # e.g. teacher, player, worker
+    feats["ends_est"] = lower.endswith("est")  # e.g. biggest, fastest, tallest
+
+    # Ends with vowel, Filipino words very commonly end in vowels
+    # so if a word DOESN'T end in a vowel, it's more likely English
+    feats["ends_with_vowel"] = bool(letters) and letters[-1] in VOWELS
+
+    # English consonant clusters that don't naturally occur in Filipino phonology
+    feats["has_eng_consonant_cluster"] = any(c in letters for c in ENG_CLUSTERS)
+
+    # Consecutive vowels, English has more of these (ea, ou, ie) than Filipino
+    feats["has_consecutive_vowels"] = bool(re.search(r'[aeiou]{2,}', letters))
+
     # Filipino also code-switches via INFIXES (inserted inside the word),
     # not just prefixes/suffixes - e.g. "pinull" = p + [in] + ull, an
     # -in- infix spliced into the English root "pull" right after the
@@ -197,6 +242,12 @@ def word_features(word: str, prefix: str = "") -> Dict[str, Any]:
     feats["is_mention"] = word.startswith("@")
     feats["is_emoji_or_symbol"] = _is_emoji_or_symbol(word)
     feats["is_all_caps_word"] = n_letters >= 2 and word.isupper()  # e.g. acronyms, shouted onomatopoeia
+
+    # English function word flag (some of the common conjunctions, prepositions, etc.) these short words are always ENG but look Filipino structurally
+    feats["is_eng_function_word"] = lower in ENG_FUNCTION_WORDS
+
+    # Filipino particle flag — these are always FIL, strong signal to avoid misclassifying as ENG
+    feats["is_fil_particle"] = lower in FIL_PARTICLES
 
     if prefix:
         feats = {f"{prefix}{k}": v for k, v in feats.items()}

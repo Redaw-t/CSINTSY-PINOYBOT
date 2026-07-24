@@ -52,30 +52,52 @@ VOWELS = set("aeiou")
 FIL_PREFIXES = [
     "nag", "mag", "napag", "mapag", "pinag", "ipinag", "ipa", "ipina",
     "pina", "naka", "maka", "pang", "pag", "ika", "taga", "ka", "ma",
-    "na", "in", "um",
+    "na", "in", "um", "nakaka", "nakiki", "makiki", "nagpa", "magpa",
+    "mapa", "napa", "paki", "sang", "tag", "i",
 ]
-FIL_SUFFIXES = ["an", "in", "han", "hin", "ng"]
+FIL_SUFFIXES = [
+    "an", "in", "han", "hin", "ng", "nin", "nan",  "nang", "ong",
+    "gang",
+]
 ENG_SUFFIXES = ["ing", "ed", "tion", "sion", "ly", "er", "est", "able", "s"]
 
 # Small closed-class list of English grammatical/function words
 # E.g. "We 'might' 'be' cooked"
 ENG_FUNCTION_WORDS = {
-    "the", "a", "an", "is", "are", "was", "were", "be", "been",
-    "have", "has", "had", "do", "does", "did", "will", "would",
+    "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
+    "have", "has", "had", "do", "does", "did", "done", "will", "would",
     "can", "could", "should", "may", "might", "shall", "must",
     "in", "on", "at", "to", "for", "of", "with", "by", "from",
-    "and", "or", "but", "not", "no", "if", "as", "up", "out"
+    "into", "onto", "upon", "about", "above", "below", "under",
+    "between", "among", "through", "during", "before", "after",
+    "over", "around", "within", "without", "against",
+    "and", "or", "but", "so", "yet", "nor", "although", "because",
+    "since", "while", "when", "where", "which", "that", "who",
+    "not", "no", "never", "neither", "if", "as", "up", "out",
+    "this", "that", "these", "those", "it", "its", "i", "we",
+    "they", "he", "she", "you", "my", "our", "their", "his", "her",
+    "your", "me", "us", "them", "him", "also", "just", "more",
+    "than", "then", "very", "too", "here", "there", "now", "still",
+    "even", "only", "both",
 }
 # Filipino grammatical particles, usually always FIL, never ENG
 # Same idea as ENG_FUNCTION_WORDS but for Filipino
 # E.g. "Pangit ka 'po' 'ba'?"
 FIL_PARTICLES = {
-    "ang", "ng", "sa", "si", "mga", "ay", "na", "at", "ni", "kay", "kaya", "nga", "ba", "raw", "daw", "lang", "naman", "pala",
-    "po", "opo", "ho", "yung", "mga", "kung","pero", "para",
+    "ang", "ng", "sa", "si", "mga", "ay", "na", "at", "ni", "kay",
+    "kaya", "nga", "ba", "raw", "daw", "lang", "naman", "pala",
+    "po", "opo", "ho", "yung", "yun", "yon", "yan", "dun", "dito", "diyan",
+    "doon","kung", "pero", "para", "dahil", "habang", "kahit", "bagaman",
+    "din", "rin",  "na", "pa", "na", "man", "muna", "talaga", "sana", "siguro",
+    "parang", "medyo", "sobra",  "grabe", "naman", "lagi", "muli", "uli",
+
 }
 
 # English consonant clusters that don't naturally appear in Filipino
-ENG_CLUSTERS = ["str", "spr", "ght", "tch", "sch", "chr", "ph", "th", "wh"]
+ENG_CLUSTERS = [
+    "str", "spr", "ght", "tch", "sch", "chr", "ph", "th", "wh",
+    "ck", "sh", "ch", "kn", "wr", "qu", "dge", "tion", "ould",
+]
 
 PUNCT_CHARS = set(string.punctuation)
 
